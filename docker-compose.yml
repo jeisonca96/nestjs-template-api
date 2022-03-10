@@ -1,0 +1,29 @@
+version: "3.5"
+
+services:
+  # mongodb:
+  #   image: mongo
+  #   ports:
+  #     - 27017:27017
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: dev
+  #     MONGO_INITDB_ROOT_PASSWORD: test
+  #   volumes:
+  #     - mongo-data:/data/db
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    # depends_on:
+    #   - mongodb
+    ports:
+      - 3000:3000
+    # environment:
+    #   DATABASES_MONGO_URL: mongodb://dev:test@mongodb/database-name?authSource=admin
+    volumes:
+      - ./node_modules:/usr/app/node_modules
+      - ./:/usr/app
+
+# volumes:
+#   mongo-data:
