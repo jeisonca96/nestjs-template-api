@@ -1,3 +1,3 @@
-import { MaybeMockedDeep } from 'ts-jest/dist/utils/testing';
+// import { MaybeMockedDeep } from 'ts-jest/dist/utils/testing';
 
-export type MockedService<T> = MaybeMockedDeep<T>;
+// export type MockedService<T> = MaybeMockedDeep<T>;
