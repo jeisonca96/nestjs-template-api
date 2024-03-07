@@ -9,7 +9,7 @@ export class ExampleController {
 
   @ApiTags(NestjsTemplateApiTags.Example)
   @Get()
-  getHello(): object {
+  getHello(): { message: string } {
     return this.exampleService.getHello();
   }
 }
