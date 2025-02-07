@@ -22,6 +22,7 @@ async function bootstrap() {
 
   app.enableVersioning({
     type: VersioningType.URI,
+    defaultVersion: '1',
   });
 
   logger.log('Setting custom limit for JSON body parser', { limit });
