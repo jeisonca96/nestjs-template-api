@@ -73,11 +73,6 @@ export class AuthService {
 
     const hashedSecret = await bcrypt.hash(secret, 10);
 
-    const existingApiKey = await this.apiKeyModel.findOne({ userId });
-    if (existingApiKey) {
-      throw new ConflictException('API key already exists for this user');
-    }
-
     const newApiKey = new this.apiKeyModel({
       userId,
       apiKey,
