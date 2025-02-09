@@ -1,10 +1,10 @@
 {
   "name": "nestjs-template-api",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "version": "1.0.0",
+  "description": "Un template base para proyectos con NestJS",
+  "author": "Jeison Aparicio jeisonca96@hotmail.com",
+  "private": false,
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
