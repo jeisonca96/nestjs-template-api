@@ -9,8 +9,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiKeyAuthStrategy } from '../strategies/api-key.strategy';
-import { JwtAuthStrategy } from '../strategies/jwt.strategy';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +24,7 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(AuthGuard('basic'))
-  async login(@Body() body: any, @Req() request: Request) {
+  async login(@Req() request: Request) {
     const user = request['user'];
     return this.authService.login(user);
   }
