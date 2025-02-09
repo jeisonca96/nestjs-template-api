@@ -1,7 +1,7 @@
 {
   "name": "nestjs-template-api",
   "version": "1.0.0",
-  "description": "Un template base para proyectos con NestJS",
+  "description": "A boilerplate for building scalable NestJS applications",
   "author": "Jeison Aparicio jeisonca96@hotmail.com",
   "private": false,
   "license": "MIT",

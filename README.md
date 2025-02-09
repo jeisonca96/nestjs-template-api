@@ -1,16 +1,14 @@
-<p align="center">
-   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
- </p>
-
 ## Getting Started
 
-NestJS Template API
+NestJS Template API (Version 11)
+
+NestJS 11 introduces several improvements, including enhanced performance, better modularization, and new features for dependency injection.
 
 ### Prerequisites
 
-- Node 16+
-- Npm 8+
-- Docker 17.12.0+
+- Node 18+
+- Npm 9+
+- Docker 20.10+
 
 ### Installing
 
@@ -35,25 +33,34 @@ docker-compose up -d
 
 ## Environment configuration
 
-The application uses environment variables.
-You have a option to configure your environment variables for local development:
+The application uses environment variables. You have an option to configure your environment variables for local development:
+
 ### env files:
 
-Use the `.env` file 
+Use the `.env` file with the following variables:
+
+```
+BASE_URL=http://localhost:3000
+API_PORT=3000
+DATABASES_MONGO_URL="mongodb://dev:test@mongodb/nest-template?authSource=admin"
+AUTH_SECRET_KEY=YOUR_SECRET_KEY
+AUTH_TOKEN_EXPIRES_IN=1d
+AUTH_REFRESH_TOKEN_EXPIRES_IN=7d
+```
 
 ## Port Configuration
 
-By default apps run in these ports:
+By default, the app runs on this port:
 
-| App                    | Port variable name           | Default port |
-| ---------------------- | ---------------------------- | ------------ |
-| **api**                | `API_PORT`                   | 3000         |
+| App     | Port variable name | Default port |
+| ------- | ------------------ | ------------ |
+| **api** | `API_PORT`         | 3000         |
 
-if you want to run in a different port you can modify the port variable in your env file.
+If you want to run on a different port, modify the port variable in your `.env` file.
 
 ## Running tests
 
-Running unit test and calculating code coverage
+Running unit tests and calculating code coverage:
 
 ```
 # unit tests
@@ -63,9 +70,17 @@ $ npm run test
 $ npm run test:cov
 ```
 
-## Running docs
+## API Documentation
 
-Running build docs (folder '/apidocs')
+The API documentation is generated automatically and available at:
+
+```
+BASE_URL/api-docs
+```
+
+## Running docs manually
+
+To manually build the documentation (stored in the `/apidocs` folder):
 
 ```
 # build docs
