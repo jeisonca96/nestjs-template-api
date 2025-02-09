@@ -9,12 +9,22 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import {
+  GenerateApiKeyApiDocs,
+  LoginApiDocs,
+  RegisterApiDocs,
+  ValidateApiKeyApiDocs,
+} from '../apidocs/auth.apidocs';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiTagsEnum } from '../../constants';
 
-@Controller('auth')
+@Controller(ApiTagsEnum.Auth)
+@ApiTags(ApiTagsEnum.Auth)
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
+  @RegisterApiDocs()
   async register(
     @Body('username') username: string,
     @Body('password') password: string,
@@ -23,6 +33,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @LoginApiDocs()
   @UseGuards(AuthGuard('basic'))
   async login(@Req() request: Request) {
     const user = request['user'];
@@ -30,6 +41,7 @@ export class AuthController {
   }
 
   @Post('generate-apikey')
+  @GenerateApiKeyApiDocs()
   @UseGuards(AuthGuard('jwt'))
   async generateApiKey(@Req() request: Request) {
     const user = request['user'];
@@ -43,6 +55,7 @@ export class AuthController {
 
   @Post('validate-apikey')
   @UseGuards(AuthGuard('apikey'))
+  @ValidateApiKeyApiDocs()
   @HttpCode(200)
   async validateApiKey() {
     return { message: 'API key and secret are valid' };

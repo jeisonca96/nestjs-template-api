@@ -13,4 +13,8 @@ export class AppConfig {
     const bodyLimit = this.config.get('BODY_LIMIT');
     return bodyLimit ?? '2mb';
   }
+
+  get baseUrl(): string {
+    return this.config.get('BASE_URL', 'http://localhost:4000');
+  }
 }
