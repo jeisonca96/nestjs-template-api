@@ -66,6 +66,7 @@ export class AuthService {
   }
 
   async generateApiKey(
+    name: string,
     userId: string,
   ): Promise<{ apiKey: string; secret: string }> {
     const apiKey = crypto.randomBytes(32).toString('base64');
@@ -74,6 +75,7 @@ export class AuthService {
     const hashedSecret = await bcrypt.hash(secret, 10);
 
     const newApiKey = new this.apiKeyModel({
+      name,
       userId,
       apiKey,
       hashedSecret,

@@ -17,6 +17,7 @@ import {
 } from '../apidocs/auth.apidocs';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTagsEnum } from '../../constants';
+import { GenerateApiKeyRequestDto, RegisterRequestDto } from '../dtos/auth.dto';
 
 @Controller(ApiTagsEnum.Auth)
 @ApiTags(ApiTagsEnum.Auth)
@@ -25,11 +26,8 @@ export class AuthController {
 
   @Post('register')
   @RegisterApiDocs()
-  async register(
-    @Body('username') username: string,
-    @Body('password') password: string,
-  ) {
-    return this.authService.register(username, password);
+  async register(@Body() body: RegisterRequestDto) {
+    return this.authService.register(body.username, body.password);
   }
 
   @Post('login')
@@ -43,13 +41,19 @@ export class AuthController {
   @Post('generate-apikey')
   @GenerateApiKeyApiDocs()
   @UseGuards(AuthGuard('jwt'))
-  async generateApiKey(@Req() request: Request) {
+  async generateApiKey(
+    @Body() body: GenerateApiKeyRequestDto,
+    @Req() request: Request,
+  ) {
     const user = request['user'];
     if (user.role !== 'admin') {
       throw new UnauthorizedException('Access denied, admin only');
     }
 
-    const { apiKey, secret } = await this.authService.generateApiKey(user._id);
+    const { apiKey, secret } = await this.authService.generateApiKey(
+      body.name,
+      user._id,
+    );
     return { apiKey, secret };
   }
 

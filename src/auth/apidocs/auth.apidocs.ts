@@ -8,11 +8,14 @@ import {
   ApiSecurity,
   ApiUnauthorizedResponse,
   ApiOkResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { ApiErrorResponseDto } from '../../exceptions/dtos/api-error-response.dto';
 import {
+  GenerateApiKeyRequestDto,
   GenerateApiKeyResponseDto,
   LoginResponseDto,
+  RegisterRequestDto,
   UserResponseDto,
   ValidateApiKeyResponseDto,
 } from '../dtos/auth.dto';
@@ -25,17 +28,20 @@ export const RegisterApiDocs = () =>
       summary: 'Register new user',
     }),
     ApiBody({
-      schema: {
-        type: 'object',
-        properties: {
-          username: { type: 'string', example: 'user1' },
-          password: { type: 'string', example: 'password' },
-        },
-      },
+      type: RegisterRequestDto,
     }),
     ApiCreatedResponse({
       description: 'User has been successfully registered',
       type: UserResponseDto,
+    }),
+    ApiBadRequestResponse({
+      description: 'Bad request',
+      type: ApiErrorResponseDto,
+      example: {
+        message: ['password should not be empty'],
+        error: 'Bad Request',
+        statusCode: 400,
+      },
     }),
     ApiConflictResponse({
       description: 'Username already exists',
@@ -67,9 +73,21 @@ export const GenerateApiKeyApiDocs = () =>
       description: 'Generate a new API key',
       summary: 'Generate API key',
     }),
+    ApiBody({
+      type: GenerateApiKeyRequestDto,
+    }),
     ApiOkResponse({
       description: 'API key generated successfully',
       type: GenerateApiKeyResponseDto,
+    }),
+    ApiBadRequestResponse({
+      description: 'Bad request',
+      type: ApiErrorResponseDto,
+      example: {
+        message: ['name should not be empty'],
+        error: 'Bad Request',
+        statusCode: 400,
+      },
     }),
     ApiUnauthorizedResponse({
       description: 'Unauthorized',

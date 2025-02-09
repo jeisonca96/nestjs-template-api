@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AppConfig } from './config/app.config';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 import { BuildApiDocs } from './apidocs';
 
 async function bootstrap() {
@@ -18,7 +18,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
 

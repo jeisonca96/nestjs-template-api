@@ -77,13 +77,3 @@ The API documentation is generated automatically and available at:
 ```
 BASE_URL/api-docs
 ```
-
-## Running docs manually
-
-To manually build the documentation (stored in the `/apidocs` folder):
-
-```
-# build docs
-$ npm run prebuild:doc
-$ npm run build:doc
-```
