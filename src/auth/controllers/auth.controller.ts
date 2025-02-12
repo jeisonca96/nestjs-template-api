@@ -18,15 +18,24 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTagsEnum } from '../../constants';
 import { GenerateApiKeyRequestDto, RegisterRequestDto } from '../dtos/auth.dto';
+import { CustomLoggerService } from '../../core-services/logger/custom-logger.service';
+import { LoggerBuilderService } from '../../core-services/logger/logger-builder.service';
 
 @Controller(ApiTagsEnum.Auth)
 @ApiTags(ApiTagsEnum.Auth)
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  private logger: CustomLoggerService;
+  constructor(
+    private authService: AuthService,
+    private readonly loggerBuilder: LoggerBuilderService,
+  ) {
+    this.logger = this.loggerBuilder.build(AuthController.name);
+  }
 
   @Post('register')
   @RegisterApiDocs()
   async register(@Body() body: RegisterRequestDto) {
+    this.logger.log(`Register auth username: ${body.username}`);
     return this.authService.register(body.username, body.password);
   }
 

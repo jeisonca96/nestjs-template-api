@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,17 +8,26 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthConfig } from '../config/auth.config';
 import { getSecondsFromDuration } from '../helpers/auth.helper';
 import { ApiKey } from '../schemas/api-key.schema';
+import { CustomLoggerService } from '../../core-services/logger/custom-logger.service';
+import { LoggerBuilderService } from '../../core-services/logger/logger-builder.service';
 
 @Injectable()
 export class AuthService {
+  private logger: CustomLoggerService;
+
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
     @InjectModel('ApiKey') private readonly apiKeyModel: Model<ApiKey>,
     private jwtService: JwtService,
     private readonly authConfig: AuthConfig,
-  ) {}
+    private readonly loggerBuilder: LoggerBuilderService,
+  ) {
+    this.logger = this.loggerBuilder.build(AuthService.name);
+  }
 
   async register(username: string, password: string): Promise<User> {
+    this.logger.log(`Register username: ${username}`);
+
     const existUser = await this.userModel.findOne({
       username,
     });
@@ -35,6 +44,7 @@ export class AuthService {
     const user = await newUser.save();
     user.password = undefined;
 
+    this.logger.log(`Register success username: ${username}`);
     return user;
   }
 
@@ -47,11 +57,14 @@ export class AuthService {
   }
 
   async login(user: User) {
+    this.logger.log(`Login username: ${user.username}`);
+
     const payload = { username: user.username, sub: user._id };
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, {
       expiresIn: this.authConfig.authRefreshTokenExpiresIn,
     });
+    this.logger.log(`Login success username: ${user.username}`);
 
     return {
       jwt: accessToken,

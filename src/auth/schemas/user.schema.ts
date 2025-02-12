@@ -1,10 +1,11 @@
 import { Schema, Document } from 'mongoose';
-import { Role } from '../dtos/auth.dto';
+
+export const Role = ['user', 'admin'] as const;
 
 export interface User extends Document {
   username: string;
   password: string;
-  role: Role;
+  role: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,7 +17,7 @@ export const UserSchema = new Schema<User>(
     role: {
       type: String,
       enum: Role,
-      default: Role.User,
+      default: 'user',
     },
   },
   { timestamps: true },

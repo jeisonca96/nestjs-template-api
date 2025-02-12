@@ -6,6 +6,7 @@ import { HealthModule } from './health/health.module';
 import { ExampleModule } from './example-module/example.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CoreServicesModule } from './core-services/core-services.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     HealthModule,
     ExampleModule,
     AuthModule,
+    CoreServicesModule,
   ],
   providers: [AppConfig],
 })
