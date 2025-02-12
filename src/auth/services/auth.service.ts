@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,21 +8,22 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthConfig } from '../config/auth.config';
 import { getSecondsFromDuration } from '../helpers/auth.helper';
 import { ApiKey } from '../schemas/api-key.schema';
-import { CustomLoggerService } from '../../core-services/logger/custom-logger.service';
-import { LoggerBuilderService } from '../../core-services/logger/logger-builder.service';
+import {
+  CustomLogger,
+  CustomLoggerService,
+} from '../../core-services/logger/custom-logger.service';
 
 @Injectable()
 export class AuthService {
-  private logger: CustomLoggerService;
-
+  logger: CustomLogger;
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
     @InjectModel('ApiKey') private readonly apiKeyModel: Model<ApiKey>,
     private jwtService: JwtService,
     private readonly authConfig: AuthConfig,
-    private readonly loggerBuilder: LoggerBuilderService,
+    private readonly customLoggerService: CustomLoggerService,
   ) {
-    this.logger = this.loggerBuilder.build(AuthService.name);
+    this.logger = this.customLoggerService.createLogger(AuthService.name);
   }
 
   async register(username: string, password: string): Promise<User> {

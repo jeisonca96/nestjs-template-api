@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerBuilderService } from '../../core-services/logger/logger-builder.service';
-import { CustomLoggerService } from '../../core-services/logger/custom-logger.service';
+import {
+  CustomLoggerService,
+  CustomLogger,
+} from '../../core-services/logger/custom-logger.service';
 
 @Injectable()
 export class ExampleService {
-  private logger: CustomLoggerService;
+  private logger: CustomLogger;
 
-  constructor(private readonly loggerBuilder: LoggerBuilderService) {
-    this.logger = this.loggerBuilder.build(ExampleService.name);
+  constructor(private readonly customLoggerService: CustomLoggerService) {
+    this.logger = this.customLoggerService.createLogger(ExampleService.name);
   }
 
   getHello(): { message: string } {

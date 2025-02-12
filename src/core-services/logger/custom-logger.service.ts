@@ -1,47 +1,44 @@
-import { Injectable, LoggerService, Logger } from '@nestjs/common';
-import { Request } from 'express';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
-export class CustomLoggerService implements LoggerService {
-  private logger: Logger;
+export class CustomLoggerService {
+  createLogger(context: string) {
+    return new CustomLogger(context);
+  }
+}
 
-  setContext(context: string) {
-    this.logger = new Logger(context || 'CustomLoggerService');
-
-    return this;
+export class CustomLogger extends Logger {
+  constructor(context: string) {
+    super(context);
   }
 
   log(message: string) {
     const traceId = this.getTraceId();
-    this.logger.log(`[${traceId}] ${message}`);
+    super.log(`[${traceId}] ${message}`);
   }
 
   error(message: string) {
     const traceId = this.getTraceId();
-    this.logger.error(`[${traceId}] ${message}`);
+    super.error(`[${traceId}] ${message}`);
   }
 
   warn(message: string) {
     const traceId = this.getTraceId();
-    this.logger.warn(`[${traceId}] ${message}`);
+    super.warn(`[${traceId}] ${message}`);
   }
 
   debug(message: string) {
     const traceId = this.getTraceId();
-    this.logger.debug(`[${traceId}] ${message}`);
+    super.debug(`[${traceId}] ${message}`);
   }
 
   verbose(message: string) {
     const traceId = this.getTraceId();
-    this.logger.verbose(`[${traceId}] ${message}`);
+    super.verbose(`[${traceId}] ${message}`);
   }
 
   private getTraceId(): string {
-    const request = this.getRequestContext();
+    const request = (global as any).__req__ || {};
     return request['traceId'] || 'unknown';
-  }
-
-  private getRequestContext(): Request {
-    return (global as any).__req__ || {};
   }
 }

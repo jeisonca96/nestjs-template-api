@@ -6,6 +6,7 @@ import {
   Req,
   UnauthorizedException,
   HttpCode,
+  Inject,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,18 +19,20 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTagsEnum } from '../../constants';
 import { GenerateApiKeyRequestDto, RegisterRequestDto } from '../dtos/auth.dto';
-import { CustomLoggerService } from '../../core-services/logger/custom-logger.service';
-import { LoggerBuilderService } from '../../core-services/logger/logger-builder.service';
+import {
+  CustomLogger,
+  CustomLoggerService,
+} from '../../core-services/logger/custom-logger.service';
 
 @Controller(ApiTagsEnum.Auth)
 @ApiTags(ApiTagsEnum.Auth)
 export class AuthController {
-  private logger: CustomLoggerService;
+  private logger: CustomLogger;
   constructor(
     private authService: AuthService,
-    private readonly loggerBuilder: LoggerBuilderService,
+    private customLoggerService: CustomLoggerService,
   ) {
-    this.logger = this.loggerBuilder.build(AuthController.name);
+    this.logger = this.customLoggerService.createLogger(AuthController.name);
   }
 
   @Post('register')
