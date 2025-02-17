@@ -1,25 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Request } from 'express';
+import { AsyncLocalStorageService } from './async-local-storage.service';
 
 @Injectable()
 export class CustomLoggerService {
+  constructor(private asyncLocalStorage: AsyncLocalStorageService) {}
+
   createLogger(context: string) {
-    return new CustomLogger(context);
+    return new CustomLogger(context, this.asyncLocalStorage);
   }
 }
 
 export class CustomLogger extends Logger {
-  constructor(context: string) {
+  constructor(
+    context: string,
+    private asyncLocalStorage: AsyncLocalStorageService,
+  ) {
     super(context);
   }
 
   private getTraceId(): string {
-    const request = this.getRequest();
+    const store = this.asyncLocalStorage.getStore();
+    const request = store?.get('request');
     return request?.['traceId'] || 'unknown';
-  }
-
-  private getRequest(): Request | null {
-    return (global as any).__req__ || null;
   }
 
   log(message: string) {

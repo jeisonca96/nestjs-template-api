@@ -3,20 +3,11 @@ import {
   CustomLogger,
   CustomLoggerService,
 } from './logger/custom-logger.service';
-
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TraceIdInterceptor } from './logger/trace-id.interceptor';
 import { TraceIdMiddleware } from './logger/trace-id.middleware';
+import { AsyncLocalStorageService } from './logger/async-local-storage.service';
 
 @Module({
-  providers: [
-    CustomLoggerService,
-    CustomLogger,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TraceIdInterceptor,
-    },
-  ],
+  providers: [CustomLoggerService, CustomLogger, AsyncLocalStorageService],
   exports: [CustomLoggerService, CustomLogger],
 })
 export class CoreServicesModule implements NestModule {
