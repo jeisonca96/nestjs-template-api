@@ -11,7 +11,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthConfig } from './config/auth.config';
 import { ApiKeySchema } from './schemas/api-key.schema';
-import { CoreServicesModule } from 'src/core-services/core-services.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { CoreServicesModule } from 'src/core-services/core-services.module';
         expiresIn: process.env.AUTH_TOKEN_EXPIRES_IN,
       },
     }),
-    CoreServicesModule,
   ],
   controllers: [AuthController],
   providers: [

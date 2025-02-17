@@ -6,7 +6,6 @@ import {
   Req,
   UnauthorizedException,
   HttpCode,
-  Inject,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
