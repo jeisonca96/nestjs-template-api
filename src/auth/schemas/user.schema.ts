@@ -5,6 +5,7 @@ export const Role = ['user', 'admin'] as const;
 export interface User extends Document {
   username: string;
   password: string;
+  // TODO: add role array
   role: 'user' | 'admin';
   createdAt: Date;
   updatedAt: Date;
