@@ -12,6 +12,7 @@ import {
   CustomLogger,
   CustomLoggerService,
 } from '../../core-services/logger/custom-logger.service';
+import { OtpService } from '../../core-services/otp/otp.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,8 @@ export class AuthService {
     private jwtService: JwtService,
     private readonly authConfig: AuthConfig,
     private readonly customLoggerService: CustomLoggerService,
+    // TODO: implement OtpService
+    private readonly otpService: OtpService,
   ) {
     this.logger = this.customLoggerService.createLogger(AuthService.name);
   }
