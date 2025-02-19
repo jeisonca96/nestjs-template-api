@@ -1,12 +1,10 @@
 import { Schema, Document } from 'mongoose';
-
-export const Role = ['user', 'admin'] as const;
+import { Role } from '../constants';
 
 export interface User extends Document {
   username: string;
   password: string;
-  // TODO: add role array
-  role: 'user' | 'admin';
+  roles: Role[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,10 +13,10 @@ export const UserSchema = new Schema<User>(
   {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: {
-      type: String,
+    roles: {
+      type: [String],
       enum: Role,
-      default: 'user',
+      default: [Role.User],
     },
   },
   { timestamps: true },

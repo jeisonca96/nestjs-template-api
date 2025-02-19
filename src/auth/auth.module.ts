@@ -11,6 +11,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { AuthConfig } from './config/auth.config';
 import { ApiKeySchema } from './schemas/api-key.schema';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtAuthAndRolesGuard } from './guards/jwt-roles.guard';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { ApiKeySchema } from './schemas/api-key.schema';
     JwtAuthStrategy,
     ApiKeyAuthStrategy,
     AuthConfig,
+    JwtAuthGuard,
+    RolesGuard,
+    JwtAuthAndRolesGuard,
   ],
 })
 export class AuthModule {}

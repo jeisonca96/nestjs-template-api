@@ -15,7 +15,7 @@ export class Otp extends Document {
   @Prop({ type: String, required: true })
   code: string;
 
-  @Prop({ type: Date, required: true, index: true })
+  @Prop({ type: Date, required: true })
   expiresAt: Date;
 
   @Prop({ type: Boolean, default: false })

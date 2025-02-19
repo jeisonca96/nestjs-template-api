@@ -22,6 +22,8 @@ import {
   CustomLogger,
   CustomLoggerService,
 } from '../../core-services/logger/custom-logger.service';
+import { AllowedRoles } from '../decorators/allowed-roles.decorator';
+import { Role } from '../constants';
 
 @Controller(ApiTagsEnum.Auth)
 @ApiTags(ApiTagsEnum.Auth)
@@ -51,16 +53,12 @@ export class AuthController {
 
   @Post('generate-apikey')
   @GenerateApiKeyApiDocs()
-  @UseGuards(AuthGuard('jwt'))
+  @AllowedRoles(Role.Admin)
   async generateApiKey(
     @Body() body: GenerateApiKeyRequestDto,
     @Req() request: Request,
   ) {
     const user = request['user'];
-    if (user.role !== 'admin') {
-      throw new UnauthorizedException('Access denied, admin only');
-    }
-
     const { apiKey, secret } = await this.authService.generateApiKey(
       body.name,
       user._id,

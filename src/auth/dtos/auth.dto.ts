@@ -1,10 +1,6 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-
-export enum Role {
-  User = 'user',
-  Admin = 'admin',
-}
+import { Role } from '../constants';
 
 @ApiTags('DTO')
 export class RegisterRequestDto {
