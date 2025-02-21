@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { NotificationsConfig } from '../notifications.config';
-import Twilio from 'twilio';
+import * as Twilio from 'twilio';
 
 @Injectable()
 export class WhatsappRepository {

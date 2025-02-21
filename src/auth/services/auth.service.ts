@@ -1,6 +1,7 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
@@ -86,7 +87,7 @@ export class AuthService {
     name: string,
     userId: string,
   ): Promise<{ apiKey: string; secret: string }> {
-    const apiKey = crypto.randomBytes(32).toString('base64');
+    const apiKey = uuidv4();
     const secret = crypto.randomBytes(32).toString('base64');
 
     const hashedSecret = await bcrypt.hash(secret, 10);

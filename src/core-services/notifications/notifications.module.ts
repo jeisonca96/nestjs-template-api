@@ -6,9 +6,11 @@ import { NotificationRepository } from './repositories/notification.repository';
 import { EmailRepository } from './repositories/email.repository';
 import { WhatsappRepository } from './repositories/whatsapp.repository';
 import { NotificationsConfig } from './notifications.config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     MongooseModule.forFeature([
       { name: Notification.name, schema: NotificationSchema },
     ]),

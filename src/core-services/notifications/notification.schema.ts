@@ -18,7 +18,7 @@ export class Notification extends Document {
   @Prop({ default: false })
   read: boolean;
 
-  @Prop()
+  @Prop({ type: Object })
   metadata?: Record<string, any>;
 }
 
