@@ -1,5 +1,5 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 import { Role } from '../constants';
 
 @ApiTags('DTO')
@@ -7,6 +7,15 @@ export class RegisterRequestDto {
   @ApiProperty({ example: 'user1' })
   @IsNotEmpty()
   username: string;
+
+  @ApiProperty({ example: 'email@email.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: '+15555555555' })
+  @IsNotEmpty()
+  phoneNumber: string;
 
   @ApiProperty({ example: 'password' })
   @IsNotEmpty()
@@ -18,8 +27,23 @@ export class UserResponseDto {
   @ApiProperty()
   username: string;
 
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  phone: string;
+
   @ApiProperty({ enum: Role })
   role: Role;
+
+  @ApiProperty()
+  isEmailVerified: boolean;
+
+  @ApiProperty()
+  isPhoneVerified: boolean;
+
+  @ApiProperty()
+  isVerified: boolean;
 
   @ApiProperty()
   createdAt: Date;
@@ -65,4 +89,19 @@ export class GenerateApiKeyResponseDto {
 export class ValidateApiKeyResponseDto {
   @ApiProperty({ example: 'API key and secret are valid' })
   message: string;
+}
+
+@ApiTags('DTO')
+export class ChangePasswordRequestDto {
+  @ApiProperty({ example: 'password' })
+  @IsNotEmpty()
+  newPassword: string;
+}
+
+@ApiTags('DTO')
+export class ForgotPasswordRequestDto {
+  @ApiProperty({ example: 'mail@mail.com' })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 }

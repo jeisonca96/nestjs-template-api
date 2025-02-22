@@ -16,4 +16,16 @@ export class AuthConfig {
   get authSecretKey(): string {
     return this.config.get('AUTH_SECRET_KEY', 'secret');
   }
+
+  get frontendUrl(): string {
+    return this.config.get('FRONTEND_URL', 'http://localhost:3000');
+  }
+
+  get baseUrl(): string {
+    return this.config.get('BASE_URL', 'http://localhost:3000');
+  }
+
+  get appName(): string {
+    return this.config.get('APP_NAME', 'NestJS App');
+  }
 }

@@ -19,10 +19,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: { sub: string }): Promise<User> {
+  async validate(payload: { sub: string; version: number }): Promise<User> {
     const user = await this.authService.findUserById(payload.sub);
-    if (!user) {
-      throw new UnauthorizedException('Invalid token');
+    if (!user || user.tokenVersion !== payload.version) {
+      throw new UnauthorizedException('Invalid or expired token');
     }
     return user;
   }

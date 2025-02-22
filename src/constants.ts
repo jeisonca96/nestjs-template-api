@@ -1,9 +1,9 @@
 export enum ApiTagsEnum {
-  Auth = 'Auth',
-  Example = 'Example',
+  Auth = 'auth',
+  Example = 'example',
 }
 
 export const ApiDescriptions: Record<ApiTagsEnum, string> = {
-  Example: 'Example generation',
-  Auth: 'Authentication',
+  example: 'Example generation',
+  auth: 'Authentication',
 };

@@ -6,10 +6,15 @@ import {
   Req,
   UnauthorizedException,
   HttpCode,
+  Get,
+  Redirect,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import {
+  ChangePasswordApiDocs,
+  ForgotPasswordApiDocs,
   GenerateApiKeyApiDocs,
   LoginApiDocs,
   RegisterApiDocs,
@@ -17,7 +22,12 @@ import {
 } from '../apidocs/auth.apidocs';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiTagsEnum } from '../../constants';
-import { GenerateApiKeyRequestDto, RegisterRequestDto } from '../dtos/auth.dto';
+import {
+  ChangePasswordRequestDto,
+  ForgotPasswordRequestDto,
+  GenerateApiKeyRequestDto,
+  RegisterRequestDto,
+} from '../dtos/auth.dto';
 import {
   CustomLogger,
   CustomLoggerService,
@@ -40,7 +50,7 @@ export class AuthController {
   @RegisterApiDocs()
   async register(@Body() body: RegisterRequestDto) {
     this.logger.log(`Register auth username: ${body.username}`);
-    return this.authService.register(body.username, body.password);
+    return this.authService.register(body, true);
   }
 
   @Post('login')
@@ -49,6 +59,14 @@ export class AuthController {
   async login(@Req() request: Request) {
     const user = request['user'];
     return this.authService.login(user);
+  }
+
+  @Post('logout')
+  @AllowedRoles(Role.User)
+  @HttpCode(204)
+  async logout(@Req() request: Request) {
+    const user = request['user'];
+    await this.authService.invalidateAllTokens(user._id);
   }
 
   @Post('generate-apikey')
@@ -72,5 +90,33 @@ export class AuthController {
   @HttpCode(200)
   async validateApiKey() {
     return { message: 'API key and secret are valid' };
+  }
+
+  @Get('verify')
+  @Redirect()
+  @HttpCode(302)
+  async verifyEmail(@Query('token') token: string) {
+    const { url } = await this.authService.verifyUser(token);
+
+    return { url };
+  }
+
+  @Post('change-password')
+  @AllowedRoles(Role.User)
+  @ChangePasswordApiDocs()
+  @HttpCode(204)
+  async changePassword(
+    @Body() body: ChangePasswordRequestDto,
+    @Req() request: Request,
+  ) {
+    const user = request['user'];
+    await this.authService.changePassword(user._id, body.newPassword);
+  }
+
+  @Post('forgot-password')
+  @ForgotPasswordApiDocs()
+  @HttpCode(204)
+  async forgotPassword(@Body() body: ForgotPasswordRequestDto) {
+    await this.authService.forgotPassword(body.email);
   }
 }

@@ -9,9 +9,12 @@ import {
   ApiUnauthorizedResponse,
   ApiOkResponse,
   ApiBadRequestResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { ApiErrorResponseDto } from '../../exceptions/dtos/api-error-response.dto';
 import {
+  ChangePasswordRequestDto,
+  ForgotPasswordRequestDto,
   GenerateApiKeyRequestDto,
   GenerateApiKeyResponseDto,
   LoginResponseDto,
@@ -108,6 +111,51 @@ export const ValidateApiKeyApiDocs = () =>
     }),
     ApiUnauthorizedResponse({
       description: 'Invalid API key or secret',
+      type: ApiErrorResponseDto,
+    }),
+  );
+
+export const ChangePasswordApiDocs = () =>
+  applyDecorators(
+    ApiSecurity('jwt'),
+    ApiOperation({
+      description: 'Change password',
+      summary: 'Change password',
+    }),
+    ApiBody({
+      type: ChangePasswordRequestDto,
+    }),
+    ApiNoContentResponse({
+      description: 'Password has been changed',
+    }),
+    ApiUnauthorizedResponse({
+      description: 'Invalid credentials',
+      type: ApiErrorResponseDto,
+    }),
+    ApiBadRequestResponse({
+      description: 'Bad request',
+      type: ApiErrorResponseDto,
+    }),
+  );
+
+export const ForgotPasswordApiDocs = () =>
+  applyDecorators(
+    ApiOperation({
+      description: 'Forgot password',
+      summary: 'Forgot password',
+    }),
+    ApiBody({
+      type: ForgotPasswordRequestDto,
+    }),
+    ApiNoContentResponse({
+      description: 'Password reset email has been sent',
+    }),
+    ApiUnauthorizedResponse({
+      description: 'Invalid credentials',
+      type: ApiErrorResponseDto,
+    }),
+    ApiBadRequestResponse({
+      description: 'Bad request',
       type: ApiErrorResponseDto,
     }),
   );

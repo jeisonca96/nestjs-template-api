@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width' />
+    <title>Email Verification</title>
+    <style>
+      .container { max-width: 600px; margin: 0 auto; padding: 20px; font-family:
+      Arial, sans-serif; } .header { color: #2d3748; font-size: 24px;
+      margin-bottom: 30px; } .content { background-color: #f7fafc; padding:
+      30px; border-radius: 8px; } .button { background-color: #4299e1; color:
+      white; padding: 12px 24px; text-decoration: none; border-radius: 4px;
+      display: inline-block; } .footer { margin-top: 30px; text-align: center;
+      color: #718096; font-size: 12px; } .text-link { color: #4299e1;
+      word-break: break-all; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='header'>Welcome to {{companyName}}!</div>
+
+      {{#if verifyLink}}
+        <div class='content'>
+          <p>Hi {{name}},</p>
+          <p>Thanks for joining
+            {{companyName}}. Please verify your email address to continue.</p>
+
+          <div style='text-align: center; margin: 40px 0;'>
+            <a href='{{verifyLink}}' class='button'>Verify Email Address</a>
+          </div>
+
+          <p>Or copy this link into your browser:</p>
+          <a href='{{verifyLink}}' class='text-link'>{{verifyLink}}</a>
+
+          <p style='margin-top: 30px;'>
+            After verification, you'll be redirected to our
+            <a href='{{loginUrl}}'>login page</a>
+            to access your account.
+          </p>
+        </div>
+      {{/if}}
+      {{^verifyLink}}
+        <div class='content'>
+          <p>Hi {{name}},</p>
+          <p>Thanks for joining {{companyName}}. We're excited to have you on
+            board!</p>
+          <p>
+            You can now
+            <a href='{{loginUrl}}'>log in</a>
+            to your account.
+          </p>
+        </div>
+      {{/verifyLink}}
+      <div class='footer'>
+        ©
+        {{currentYear}}
+        {{companyName}}. All rights reserved.<br />
+        [Company Address]<br />
+        <a href='{{loginUrl}}/privacy'>Privacy Policy</a>
+        |
+        <a href='{{loginUrl}}/terms'>Terms of Service</a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -30,6 +30,7 @@ export class NotificationsService {
    * @param {Record<string, any>} [context] - Optional context to be used in the email template.
    * @returns {Promise<void>} A promise that resolves when the email has been sent.
    * @example
+   * import * as path from 'path';
    * const context = {
    *   name: user.fullName,
    *   verifyLink: `https://example.com/verify?token=${user.verificationToken}`,
