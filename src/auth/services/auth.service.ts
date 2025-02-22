@@ -302,4 +302,40 @@ export class AuthService {
 
     return { success: true };
   }
+
+  async updateEmail(userId: string, newEmail: string) {
+    this.logger.log(`Update email for user: ${userId}`);
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const existsEmail = await this.userModel.exists({ email: newEmail });
+    if (existsEmail) {
+      throw new ConflictException('Email already exists');
+    }
+
+    user.email = newEmail;
+    await user.save();
+    this.logger.log(`Update email success for user: ${userId}`);
+    return user;
+  }
+
+  async updatePhoneNumber(userId: string, newPhone: string) {
+    this.logger.log(`Update phone for user: ${userId}`);
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const existsPhone = await this.userModel.exists({ phoneNumber: newPhone });
+    if (existsPhone) {
+      throw new ConflictException('Phone already exists');
+    }
+
+    user.phoneNumber = newPhone;
+    await user.save();
+    this.logger.log(`Update phone success for user: ${userId}`);
+    return user;
+  }
 }
