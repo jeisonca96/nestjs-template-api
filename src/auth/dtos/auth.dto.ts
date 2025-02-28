@@ -1,6 +1,6 @@
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { Role } from '../constants';
+import { Roles } from '../constants';
 
 @ApiTags('DTO')
 export class RegisterRequestDto {
@@ -33,8 +33,8 @@ export class UserResponseDto {
   @ApiProperty()
   phone: string;
 
-  @ApiProperty({ enum: Role })
-  role: Role;
+  @ApiProperty({ enum: Roles })
+  role: Roles;
 
   @ApiProperty()
   isEmailVerified: boolean;

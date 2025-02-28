@@ -7,7 +7,7 @@ import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from '../schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
 import { AuthConfig } from '../config/auth.config';
@@ -22,6 +22,9 @@ import { NotificationsService } from '../../core-services/notifications/notifica
 import { RegisterRequestDto } from '../dtos/auth.dto';
 import * as path from 'path';
 import { VerificationTypes } from '../constants';
+import { FilterQueryDto } from 'src/core-services/filtering-system/pagination.dto';
+import { CriteriaService } from 'src/core-services/filtering-system/criteria.service';
+import { PaginationService } from 'src/core-services/filtering-system/pagination.service';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +36,8 @@ export class AuthService {
     private readonly authConfig: AuthConfig,
     private readonly customLoggerService: CustomLoggerService,
     private readonly notificationsService: NotificationsService,
+    private paginationService: PaginationService,
+    private criteriaService: CriteriaService,
   ) {
     this.logger = this.customLoggerService.createLogger(AuthService.name);
   }
@@ -337,5 +342,16 @@ export class AuthService {
     await user.save();
     this.logger.log(`Update phone success for user: ${userId}`);
     return user;
+  }
+
+  async getAllUsers(params: FilterQueryDto, userId: string) {
+    this.logger.log(`Get all users`);
+
+    const baseQuery = this.criteriaService.buildQuery(params?.filters || []);
+    const finalQuery = {
+      $and: [baseQuery, { _id: { $ne: new Types.ObjectId(userId) } }],
+    };
+
+    return this.paginationService.paginate(this.userModel, finalQuery, params);
   }
 }

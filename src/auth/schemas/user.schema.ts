@@ -1,12 +1,12 @@
 import { Schema, Document } from 'mongoose';
-import { Role } from '../constants';
+import { Roles } from '../constants';
 
 export interface User extends Document {
   username: string;
   email: string;
   phoneNumber: string;
   password: string;
-  roles: Role[];
+  roles: Roles[];
   isVerified: boolean;
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
@@ -26,8 +26,8 @@ export const UserSchema = new Schema<User>(
     isVerified: { type: Boolean, default: false },
     roles: {
       type: [String],
-      enum: Role,
-      default: [Role.User],
+      enum: Roles,
+      default: [Roles.User],
     },
     tokenVersion: { type: Number, default: 1 },
   },

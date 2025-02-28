@@ -7,14 +7,14 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ALLOWED_ROLES_KEY } from '../decorators/allowed-roles.decorator';
-import { Role } from '../constants';
+import { Roles } from '../constants';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.get<Role[]>(
+    const requiredRoles = this.reflector.get<Roles[]>(
       ALLOWED_ROLES_KEY,
       context.getHandler(),
     );

@@ -22,6 +22,10 @@ import {
   UserResponseDto,
   ValidateApiKeyResponseDto,
 } from '../dtos/auth.dto';
+import {
+  GlobalQueryParamsDocs,
+  PaginatedResponse,
+} from 'src/core-services/filtering-system/paginated.dto';
 
 export const RegisterApiDocs = () =>
   applyDecorators(
@@ -159,3 +163,21 @@ export const ForgotPasswordApiDocs = () =>
       type: ApiErrorResponseDto,
     }),
   );
+
+export const GetAllUsersApiDocs = () => {
+  return applyDecorators(
+    ApiOperation({
+      description: 'Get all users',
+      summary: 'Get all users',
+    }),
+    GlobalQueryParamsDocs(),
+    ApiOkResponse({
+      description: 'List of all users',
+      type: PaginatedResponse(UserResponseDto),
+    }),
+    ApiBadRequestResponse({
+      description: 'Bad request',
+      type: ApiErrorResponseDto,
+    }),
+  );
+};

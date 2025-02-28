@@ -4,7 +4,6 @@ import {
   Body,
   UseGuards,
   Req,
-  UnauthorizedException,
   HttpCode,
   Get,
   Redirect,
@@ -16,6 +15,7 @@ import {
   ChangePasswordApiDocs,
   ForgotPasswordApiDocs,
   GenerateApiKeyApiDocs,
+  GetAllUsersApiDocs,
   LoginApiDocs,
   RegisterApiDocs,
   ValidateApiKeyApiDocs,
@@ -33,7 +33,8 @@ import {
   CustomLoggerService,
 } from '../../core-services/logger/custom-logger.service';
 import { AllowedRoles } from '../decorators/allowed-roles.decorator';
-import { Role } from '../constants';
+import { Roles } from '../constants';
+import { FilterQueryDto } from 'src/core-services/filtering-system/pagination.dto';
 
 @Controller(ApiTagsEnum.Auth)
 @ApiTags(ApiTagsEnum.Auth)
@@ -62,7 +63,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @AllowedRoles(Role.User)
+  @AllowedRoles(Roles.User)
   @HttpCode(204)
   async logout(@Req() request: Request) {
     const user = request['user'];
@@ -71,7 +72,7 @@ export class AuthController {
 
   @Post('generate-apikey')
   @GenerateApiKeyApiDocs()
-  @AllowedRoles(Role.Admin)
+  @AllowedRoles(Roles.Admin)
   async generateApiKey(
     @Body() body: GenerateApiKeyRequestDto,
     @Req() request: Request,
@@ -102,7 +103,7 @@ export class AuthController {
   }
 
   @Post('change-password')
-  @AllowedRoles(Role.User)
+  @AllowedRoles(Roles.User)
   @ChangePasswordApiDocs()
   @HttpCode(204)
   async changePassword(
@@ -118,5 +119,16 @@ export class AuthController {
   @HttpCode(204)
   async forgotPassword(@Body() body: ForgotPasswordRequestDto) {
     await this.authService.forgotPassword(body.email);
+  }
+
+  @Get()
+  @AllowedRoles(Roles.Admin)
+  @GetAllUsersApiDocs()
+  async getAllUsers(
+    @Query() filterDto: FilterQueryDto,
+    @Req() request: Request,
+  ) {
+    const user = request['user'];
+    return this.authService.getAllUsers(filterDto, user.id);
   }
 }
