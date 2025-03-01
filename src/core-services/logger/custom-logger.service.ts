@@ -24,28 +24,28 @@ export class CustomLogger extends Logger {
     return request?.['traceId'] || 'unknown';
   }
 
-  log(message: string) {
+  log(message: any, ...optionalParams: [...any, string?]) {
     const traceId = this.getTraceId();
-    super.log(`[${traceId}] ${message}`);
+    super.log(`[${traceId}] ${message}`, optionalParams);
   }
 
-  error(message: string) {
+  error(message: any, ...optionalParams: [...any, string?]) {
     const traceId = this.getTraceId();
-    super.error(`[${traceId}] ${message}`);
+    super.error(`[${traceId}] ${message}`, optionalParams);
   }
 
-  warn(message: string) {
+  warn(message: any, ...optionalParams: [...any, string?]) {
     const traceId = this.getTraceId();
-    super.warn(`[${traceId}] ${message}`);
+    super.warn(`[${traceId}] ${message}`, optionalParams);
   }
 
-  debug(message: string) {
+  debug(message: any, ...optionalParams: [...any, string?]) {
     const traceId = this.getTraceId();
-    super.debug(`[${traceId}] ${message}`);
+    super.debug(`[${traceId}] ${message}`, optionalParams);
   }
 
-  verbose(message: string) {
+  verbose(message: any, ...optionalParams: [...any, string?]) {
     const traceId = this.getTraceId();
-    super.verbose(`[${traceId}] ${message}`);
+    super.verbose(`[${traceId}] ${message}`, optionalParams);
   }
 }
