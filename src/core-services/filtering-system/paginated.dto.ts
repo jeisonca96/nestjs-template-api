@@ -1,45 +1,57 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiProperty, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiProperty,
+  ApiQuery,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
+export class PaginationDto {
+  @ApiProperty({ example: 100 })
+  total: number;
+
+  @ApiProperty({ example: 1 })
+  page: number;
+
+  @ApiProperty({ example: 10 })
+  perPage: number;
+
+  @ApiProperty({ example: 10 })
+  totalPages: number;
+
+  @ApiProperty({ example: 2, nullable: true })
+  nextPage: number | null;
+
+  @ApiProperty({ example: null, nullable: true })
+  prevPage: number | null;
+}
+
+@ApiExtraModels(PaginationDto)
 export class PaginatedResponseDto<T> {
   @ApiProperty({ description: 'Response data' })
   data: T[];
 
-  @ApiProperty({
-    description: 'Pagination metadata',
-    example: {
-      total: 100,
-      page: 1,
-      perPage: 10,
-      totalPages: 10,
-      nextPage: 2,
-      prevPage: null,
+  pagination: PaginationDto;
+}
+
+export function PaginatedResponseSchema(ResponseDto: Function) {
+  return {
+    type: 'object',
+    properties: {
+      data: {
+        type: 'array',
+        items: { $ref: getSchemaPath(ResponseDto) },
+      },
+      pagination: {
+        $ref: getSchemaPath(PaginationDto),
+      },
     },
-  })
-  pagination: {
-    total: number;
-    page: number;
-    perPage: number;
-    totalPages: number;
-    nextPage: number | null;
-    prevPage: number | null;
   };
 }
 
-export const PaginatedResponse = <T extends Function>(model: T) => {
-  class PaginatedResponseClass extends PaginatedResponseDto<T> {
-    @ApiProperty({ type: [model] })
-    data: T[];
-  }
-  return PaginatedResponseClass;
-};
-
 export const GlobalQueryParamsDocs = () => {
   return applyDecorators(
-    ApiOperation({
-      summary: 'Get paginated results',
-      description: 'Endpoint to get paginated results with advanced filtering',
-    }),
+    ApiExtraModels(PaginatedResponseDto),
     ApiQuery({
       name: 'page',
       required: false,

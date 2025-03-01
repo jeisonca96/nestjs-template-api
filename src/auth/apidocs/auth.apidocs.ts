@@ -24,7 +24,7 @@ import {
 } from '../dtos/auth.dto';
 import {
   GlobalQueryParamsDocs,
-  PaginatedResponse,
+  PaginatedResponseSchema,
 } from 'src/core-services/filtering-system/paginated.dto';
 
 export const RegisterApiDocs = () =>
@@ -173,7 +173,7 @@ export const GetAllUsersApiDocs = () => {
     GlobalQueryParamsDocs(),
     ApiOkResponse({
       description: 'List of all users',
-      type: PaginatedResponse(UserResponseDto),
+      schema: PaginatedResponseSchema(UserResponseDto),
     }),
     ApiBadRequestResponse({
       description: 'Bad request',
