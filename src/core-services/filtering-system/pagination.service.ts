@@ -8,19 +8,27 @@ export class PaginationService {
     model: Model<T>,
     query: FilterQuery<T>,
     dto: FilterQueryDto,
+    populates: string[] = [],
     notAllowedFields: string[] = [],
   ): Promise<PaginatedResponse<T>> {
     if (dto.sortBy && notAllowedFields.includes(dto.sortBy)) {
       throw new BadRequestException(`Invalid sort field: ${dto.sortBy}`);
     }
 
+    let queryBuilder = model
+      .find(query)
+      .sort({ [dto.sortBy]: dto.sortOrder === SortOrder.DESC ? -1 : 1 })
+      .skip((dto.page - 1) * dto.limit)
+      .limit(dto.limit);
+
+    if (populates.length > 0) {
+      populates.forEach((populate) => {
+        queryBuilder = queryBuilder.populate(populate);
+      });
+    }
+
     const [results, total] = await Promise.all([
-      model
-        .find(query)
-        .sort({ [dto.sortBy]: dto.sortOrder === SortOrder.DESC ? -1 : 1 })
-        .skip((dto.page - 1) * dto.limit)
-        .limit(dto.limit)
-        .exec(),
+      queryBuilder.exec(),
       model.countDocuments(query).exec(),
     ]);
 
