@@ -33,7 +33,7 @@ export class CloudStorageController {
   constructor(private readonly storageService: CloudStorageService) {}
 
   @Post('upload')
-  @AllowedRoles(Roles.Admin, Roles.Doctor, Roles.Receptionist)
+  @AllowedRoles(Roles.Admin)
   @UseInterceptors(FileInterceptor('file'))
   @FileUploadApiDocs()
   async uploadFile(
@@ -55,7 +55,7 @@ export class CloudStorageController {
   }
 
   @Delete(':key')
-  @AllowedRoles(Roles.Admin, Roles.Doctor, Roles.Receptionist)
+  @AllowedRoles(Roles.Admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @DeleteFileApiDocs()
   async deleteFile(@Param('key') key: string) {
@@ -63,7 +63,7 @@ export class CloudStorageController {
   }
 
   @Post('signed-url')
-  @AllowedRoles(Roles.Admin, Roles.Doctor, Roles.Receptionist)
+  @AllowedRoles(Roles.Admin)
   @GetSignedUrlApiDocs()
   async getSignedUrl(@Body() body: GetSignedUrlDto) {
     return this.storageService.getSignedUrl(body.key, body.expires);

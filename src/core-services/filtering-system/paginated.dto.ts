@@ -6,7 +6,7 @@ import {
   ApiQuery,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { ApiErrorResponseDto } from 'src/exceptions/dtos/api-error-response.dto';
+import { ApiErrorResponseDto } from 'src/core-services/exceptions/dtos/api-error-response.dto';
 
 export class PaginationDto {
   @ApiProperty({ example: 100 })

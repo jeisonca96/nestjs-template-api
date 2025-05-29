@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   CustomLoggerService,
   CustomLogger,
 } from '../../core-services/logger/custom-logger.service';
+import { CreateExampleDto } from '../dtos/example.dto';
 
 @Injectable()
 export class ExampleService {
@@ -16,5 +17,21 @@ export class ExampleService {
     this.logger.log('Here get hello!');
 
     return { message: 'Hello World!' };
+  }
+
+  postHello(createExampleDto: CreateExampleDto) {
+    this.logger.log('Here post hello!');
+
+    if (createExampleDto.message && createExampleDto.message.length > 100) {
+      this.logger.warn(
+        'Message length exceeds 100 characters, truncating to 100 characters.',
+      );
+      throw new BadRequestException(
+        'Message length exceeds 100 characters, please shorten your message.',
+        'MESSAGE_TOO_LONG',
+      );
+    }
+
+    return createExampleDto;
   }
 }
