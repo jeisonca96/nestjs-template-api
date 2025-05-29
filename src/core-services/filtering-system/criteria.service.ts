@@ -61,7 +61,8 @@ export class CriteriaService {
   ): Record<string, any> {
     if (!Array.isArray(value) || value.length !== 2) {
       throw new BadRequestException(
-        'Between operator requires an array of two values.',
+        'Between operator requires an array of two values',
+        'INVALID_BETWEEN',
       );
     }
 
@@ -100,7 +101,10 @@ export class CriteriaService {
 
   private validateField(field: string, notAllowedFields: string[]) {
     if (notAllowedFields.includes(field)) {
-      throw new BadRequestException(`Filtering by ${field} is not allowed.`);
+      throw new BadRequestException(
+        `Filtering by ${field} is not allowed`,
+        'FILTERING_NOT_ALLOWED',
+      );
     }
   }
 }

@@ -1,10 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiExtraModels,
   ApiProperty,
   ApiQuery,
   getSchemaPath,
 } from '@nestjs/swagger';
+import { ApiErrorResponseDto } from 'src/exceptions/dtos/api-error-response.dto';
 
 export class PaginationDto {
   @ApiProperty({ example: 100 })
@@ -91,6 +93,46 @@ export const GlobalQueryParamsDocs = () => {
         ],
       },
       type: String,
+    }),
+  );
+};
+
+export const GlobalExceptionDocs = () => {
+  return applyDecorators(
+    ApiBadRequestResponse({
+      description: 'Bad Request',
+      type: ApiErrorResponseDto,
+      examples: {
+        example1: {
+          summary: 'Invalid values',
+          value: {
+            message: [
+              'page must be a number conforming to the specified constraints',
+              'limit must be a number conforming to the specified constraints',
+            ],
+            error: 'Bad Request',
+            statusCode: 400,
+          },
+        },
+        example2: {
+          summary: 'Invalid criteria format',
+          value: {
+            message: 'Invalid criteria format',
+            error: 'INVALID_CRITERIA',
+            statusCode: 400,
+          },
+        },
+        example3: {
+          summary: 'Invalid filters',
+          value: {
+            message: [
+              'filters.0.operator must be one of the following values: eq, ne, gt, gte, lt, lte, in, nin, contains, between, exists, not_exists, regex, array_contains, array_size, elem_match',
+            ],
+            error: 'Bad Request',
+            statusCode: 400,
+          },
+        },
+      },
     }),
   );
 };

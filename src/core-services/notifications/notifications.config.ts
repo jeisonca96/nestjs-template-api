@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { generate } from 'rxjs';
 
 @Injectable()
 export class NotificationsConfig {
@@ -23,6 +24,17 @@ export class NotificationsConfig {
       accountSid: this.config.get('WHATSAPP_ACCOUNT_SID'),
       authToken: this.config.get('WHATSAPP_AUTH_TOKEN'),
       phoneNumber: this.config.get('WHATSAPP_PHONE_NUMBER'),
+    };
+  }
+
+  get googleCalendarConfig() {
+    return {
+      clientId: this.config.get('GOOGLE_CLIENT_ID'),
+      clientSecret: this.config.get('GOOGLE_CLIENT_SECRET'),
+      redirectUri:
+        this.config.get('BASE_URL') + this.config.get('GOOGLE_REDIRECT_URI'),
+      generateAuthUrl:
+        this.config.get('BASE_URL') + '/v1/notification/calendar/auth',
     };
   }
 }

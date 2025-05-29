@@ -5,6 +5,9 @@ import { AppModule } from './app.module';
 import { AppConfig } from './config/app.config';
 import { SwaggerModule } from '@nestjs/swagger';
 import { BuildApiDocs } from './apidocs';
+import { GlobalExceptionFilter } from './core-services/exceptions/filters';
+import { AlertsService } from './core-services/alerts/alerts.service';
+import { CustomLoggerService } from './core-services/logger/custom-logger.service';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -28,6 +31,16 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   });
+
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
+  const alertsService = app.get(AlertsService);
+  const loggerService = app.get(CustomLoggerService);
+  app.useGlobalFilters(new GlobalExceptionFilter(alertsService, loggerService));
 
   logger.log('Setting custom limit for JSON body parser', { limit });
   app.use(json({ limit }));

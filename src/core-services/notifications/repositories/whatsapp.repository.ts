@@ -19,4 +19,19 @@ export class WhatsappRepository {
       to: `whatsapp:${to}`,
     });
   }
+
+  async sendMessageToTemplate(
+    to: string,
+    templateSid: string,
+    variables: Record<string, string>,
+  ): Promise<void> {
+    const { phoneNumber } = this.config.whatsappConfig;
+
+    await this.client.messages.create({
+      contentSid: templateSid,
+      from: `whatsapp:${phoneNumber}`,
+      to: `whatsapp:${to}`,
+      contentVariables: JSON.stringify(variables),
+    });
+  }
 }

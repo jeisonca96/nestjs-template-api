@@ -11,7 +11,7 @@ import {
   ApiBadRequestResponse,
   ApiNoContentResponse,
 } from '@nestjs/swagger';
-import { ApiErrorResponseDto } from '../../exceptions/dtos/api-error-response.dto';
+import { ApiErrorResponseDto } from '../../core-services/exceptions/dtos/api-error-response.dto';
 import {
   ChangePasswordRequestDto,
   ForgotPasswordRequestDto,

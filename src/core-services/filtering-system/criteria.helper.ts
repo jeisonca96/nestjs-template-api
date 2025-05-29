@@ -7,7 +7,10 @@ export function transformToCriteria(value: any): Criterion[] {
     const parsed = typeof value === 'string' ? JSON.parse(value) : value;
     return convertCriteria(parsed);
   } catch (error) {
-    throw new BadRequestException('Formato de filtros inválido');
+    throw new BadRequestException(
+      'Invalid criteria format',
+      'INVALID_CRITERIA',
+    );
   }
 }
 

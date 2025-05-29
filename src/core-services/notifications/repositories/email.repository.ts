@@ -1,4 +1,3 @@
-// src/notifications/repositories/email.repository.ts
 import { Injectable } from '@nestjs/common';
 import { NotificationsConfig } from '../notifications.config';
 import * as nodemailer from 'nodemailer';

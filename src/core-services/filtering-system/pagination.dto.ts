@@ -24,11 +24,13 @@ export class FilterQueryDto {
 
   @ApiProperty({ required: false, default: 1 })
   @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
   page?: number = 1;
 
   @ApiProperty({ required: false, default: 10 })
   @IsOptional()
+  @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
   limit?: number = 10;
 

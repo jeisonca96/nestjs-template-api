@@ -12,12 +12,15 @@ export class PaginationService {
     notAllowedFields: string[] = [],
   ): Promise<PaginatedResponse<T>> {
     if (dto.sortBy && notAllowedFields.includes(dto.sortBy)) {
-      throw new BadRequestException(`Invalid sort field: ${dto.sortBy}`);
+      throw new BadRequestException(
+        `Invalid sort field: ${dto.sortBy}`,
+        'INVALID_SORT_FIELD',
+      );
     }
 
     let queryBuilder = model
       .find(query)
-      .sort({ [dto.sortBy]: dto.sortOrder === SortOrder.DESC ? -1 : 1 })
+      .sort({ [dto.sortBy]: dto.sortOrder === SortOrder.ASC ? 1 : -1 })
       .skip((dto.page - 1) * dto.limit)
       .limit(dto.limit);
 
@@ -35,7 +38,6 @@ export class PaginationService {
     const totalPages = Math.ceil(total / dto.limit);
 
     return {
-      data: results,
       pagination: {
         total,
         page: dto.page,
@@ -44,6 +46,7 @@ export class PaginationService {
         nextPage: dto.page < totalPages ? dto.page + 1 : null,
         prevPage: dto.page > 1 ? dto.page - 1 : null,
       },
+      data: results,
     };
   }
 }

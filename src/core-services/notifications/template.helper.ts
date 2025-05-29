@@ -1,7 +1,5 @@
-// src/shared/helpers/template.helper.ts
 import * as handlebars from 'handlebars';
 import * as fs from 'fs';
-import * as path from 'path';
 
 export class TemplateHelper {
   /**
