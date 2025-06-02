@@ -13,10 +13,17 @@ This NestJS template comes with the following features out of the box:
 - Refresh token support
 - Password reset functionality
 
+### 🛡️ Security Features
+- Multi-tier rate limiting and DDoS protection
+- Comprehensive security headers (Helmet middleware)
+- Input validation and sanitization with custom decorators
+- CORS protection and environment-based security configuration
+- **For detailed security information, see [SECURITY.md](SECURITY.md)**
+
 ### 📊 Database & Storage
 - MongoDB integration with Mongoose
 - Cloud storage support (AWS S3)
-- Database health checks
+- Comprehensive database health monitoring
 
 ### 🔧 Core Services
 - **Filtering System**: Advanced query filtering and pagination
@@ -24,17 +31,27 @@ This NestJS template comes with the following features out of the box:
 - **OTP Service**: One-time password generation and validation
 - **Logger**: Custom logging with trace ID support
 - **Alerts**: Configurable alert system
+- **Validation & Sanitization**: Custom decorators for validation and automatic request sanitization
+
+### 🏥 Health Monitoring
+- **Basic Health Check**: Simple endpoint for load balancers (`/v1/health`)
+- **Detailed Health Check**: Comprehensive system status with memory, disk, and service checks (`/v1/health/detailed`)
+- **Liveness Probe**: Kubernetes-ready endpoint for container health (`/v1/health/liveness`)
+- **Readiness Probe**: Service readiness validation including external dependencies (`/v1/health/readiness`)
+- **System Monitoring**: Memory usage (90% threshold), disk space, external service connectivity
 
 ### 📚 Documentation & Development
 - Swagger/OpenAPI documentation
 - Comprehensive error handling
-- Custom validation pipes
-- Health check endpoints
+- Production-ready validation pipeline
+- Multiple health check endpoints
 - Docker support with docker-compose
+- Security documentation (SECURITY.md)
 
 ### 🧪 Testing & Quality
 - Unit tests with Jest
 - E2E testing setup
+- **Security Testing**: Automated security test suite (`npm run test:security`)
 - Code coverage reports
 - ESLint and Prettier configuration
 
@@ -50,9 +67,10 @@ src/
 │   ├── filtering-system/ # Query filtering
 │   ├── logger/         # Custom logging
 │   ├── notifications/  # Email/SMS notifications
-│   └── otp/           # OTP service
+│   ├── otp/           # OTP service
+│   └── validation/    # Validation & sanitization decorators
 ├── example-module/     # Example module template
-└── health/            # Health check endpoints
+└── health/            # Comprehensive health monitoring
 ```
 
 ## Quick Start
@@ -73,8 +91,14 @@ cp .env.example .env
 # 4. Start with Docker (includes MongoDB)
 docker-compose up -d
 
-# 5. Access your API
+# 5. Run security tests (optional)
+npm run test:security
+
+# 6. Access your API
 open http://localhost:3000/api-docs
+
+# 7. Check system health
+open http://localhost:3000/v1/health/detailed
 ```
 
 ## Getting Started
@@ -143,6 +167,9 @@ The Docker setup includes:
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:cov` | Run tests with coverage report |
 | `npm run test:e2e` | Run end-to-end tests |
+| `npm run test:security` | Run automated security tests |
+| `npm run security:check` | Check for security vulnerabilities |
+| `npm run security:audit` | Audit dependencies for security issues |
 | `npm run lint` | Lint and fix code |
 | `npm run format` | Format code with Prettier |
 
@@ -187,6 +214,15 @@ cp .env.example .env
 | `WHATSAPP_AUTH_TOKEN` | Twilio Auth Token | No | - | `your_auth_token` |
 | `WHATSAPP_PHONE_NUMBER` | WhatsApp phone number | No | - | `+1234567890` |
 
+#### Security Configuration
+| Variable | Description | Required | Default | Example |
+|----------|-------------|----------|---------|---------|
+| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | No | `*` | `http://localhost:3000,https://app.example.com` |
+| `RATE_LIMIT_WINDOW_MS` | Rate limiting window in milliseconds | No | `900000` | `600000` (10 minutes) |
+| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | No | `100` | `50` |
+| `HELMET_CSP_SCRIPT_SRC` | Content Security Policy script sources | No | `'self'` | `'self' 'unsafe-inline'` |
+| `SECURITY_ENABLE_HELMET` | Enable helmet security middleware | No | `true` | `false` |
+
 ### Environment Files
 
 Create your `.env` file based on `.env.example`:
@@ -201,6 +237,13 @@ DATABASES_MONGO_URL="mongodb://dev:test@localhost:27017/nest-template?authSource
 AUTH_SECRET_KEY=YOUR_SECRET_KEY
 AUTH_TOKEN_EXPIRES_IN=1d
 AUTH_REFRESH_TOKEN_EXPIRES_IN=7d
+
+# Security Configuration
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+HELMET_CSP_SCRIPT_SRC='self'
+SECURITY_ENABLE_HELMET=true
 
 # Email (Optional)
 EMAIL_HOST=smtp.gmail.com
@@ -286,6 +329,83 @@ npm run test:e2e
 
 - **Unit tests**: Located in `src/` alongside source files (`.spec.ts`)
 - **E2E tests**: Located in `test/` directory
+- **Security tests**: Automated security test suite in `scripts/test-security.sh`
+- **Coverage reports**: Generated in `coverage/` directory
+- **Jest configuration**: `package.json` and `test/jest-e2e.json`
+
+## Security Features
+
+This template includes comprehensive security features to protect your API. For detailed security documentation, configuration options, and best practices, see **[SECURITY.md](SECURITY.md)**.
+
+## Health Monitoring
+
+The application provides comprehensive health monitoring endpoints for different use cases:
+
+### Available Health Endpoints
+
+| Endpoint | Purpose | Response Time | Use Case |
+|----------|---------|---------------|----------|
+| `GET /v1/health` | Basic health check | ~1ms | Load balancers, simple monitoring |
+| `GET /v1/health/detailed` | Comprehensive system status | ~100ms | Detailed monitoring, dashboards |
+| `GET /v1/health/liveness` | Container/process health | ~1ms | Kubernetes liveness probes |
+| `GET /v1/health/readiness` | Service readiness | ~100ms | Kubernetes readiness probes |
+
+### Health Check Features
+
+**Basic Health Check** (`/v1/health`)
+- Simple "OK" response for quick availability checks
+- Minimal resource usage
+- Perfect for load balancer health checks
+
+**Detailed Health Check** (`/v1/health/detailed`)
+- **Database**: MongoDB connection and query performance
+- **Memory**: Current usage vs. 90% threshold warning
+- **Disk Space**: Available storage monitoring
+- **External Services**: Connectivity to external APIs
+- **Environment**: Critical environment variable validation
+
+**Liveness Probe** (`/v1/health/liveness`)
+- Confirms the application process is running
+- Kubernetes-ready endpoint
+- Fast response for container orchestration
+
+**Readiness Probe** (`/v1/health/readiness`)
+- Validates all dependencies are available
+- Checks database connectivity
+- Verifies external service availability
+- Used by Kubernetes for traffic routing decisions
+
+### Health Response Format
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "uptime": 3600,
+  "version": "1.0.0",
+  "environment": "production",
+  "checks": {
+    "database": { "status": "up", "responseTime": 5 },
+    "memory": { "status": "ok", "usage": "45%", "threshold": "90%" },
+    "disk": { "status": "ok", "available": "85%" },
+    "external_services": { "status": "up", "services": ["api.example.com"] }
+  }
+}
+```
+
+### Monitoring Integration
+
+The health endpoints are designed to integrate with:
+- **Kubernetes**: Liveness and readiness probes
+- **Docker**: HEALTHCHECK instructions
+- **Load Balancers**: Health check configurations
+- **Monitoring Tools**: Prometheus, DataDog, New Relic
+- **Alerting Systems**: PagerDuty, OpsGenie
+
+### Test Configuration
+
+- **Unit tests**: Located in `src/` alongside source files (`.spec.ts`)
+- **E2E tests**: Located in `test/` directory
 - **Coverage reports**: Generated in `coverage/` directory
 - **Jest configuration**: `package.json` and `test/jest-e2e.json`
 
@@ -315,51 +435,21 @@ API documentation is configured in:
 - `src/apidocs.ts` - Main documentation setup
 - Individual modules include their own documentation in `apidocs/` folders
 
-## Troubleshooting
+## Production Deployment
 
-### Common Issues
+This template is production-ready with comprehensive security and monitoring features.
 
-**MongoDB Connection Issues**
-```bash
-# Check if MongoDB is running
-docker-compose ps
+### Security Checklist
 
-# View MongoDB logs
-docker-compose logs mongodb
+Before deploying to production:
+- [ ] Set strong `AUTH_SECRET_KEY` (min 32 characters)
+- [ ] Configure `NODE_ENV=production`
+- [ ] Set proper `CORS_ORIGINS` for your domains
+- [ ] Configure rate limiting for your traffic patterns
+- [ ] Enable security headers (`SECURITY_ENABLE_HELMET=true`)
+- [ ] Set up email configuration for notifications
 
-# Restart MongoDB
-docker-compose restart mongodb
-```
-
-**Port Already in Use**
-```bash
-# Check what's using port 3000
-lsof -i :3000
-
-# Use a different port
-echo "API_PORT=3001" >> .env
-```
-
-**Module Not Found Errors**
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**Build Issues**
-```bash
-# Clean build directory
-npm run prebuild
-npm run build
-```
-
-### Environment Issues
-
-Make sure all required environment variables are set:
-- `AUTH_SECRET_KEY` should be a strong, unique secret
-- `DATABASES_MONGO_URL` should point to a running MongoDB instance
-- Email configuration is required for password reset functionality
+**For complete security configuration, see [SECURITY.md](SECURITY.md)**
 
 ## Contributing
 
@@ -382,6 +472,7 @@ We welcome contributions from the community! This NestJS template aims to provid
    ```bash
    npm run test
    npm run test:cov
+   npm run test:security  # Test security features
    ```
 6. **Commit your changes** with descriptive commit messages
 7. **Push to your fork** and submit a pull request
@@ -394,6 +485,9 @@ We welcome contributions from the community! This NestJS template aims to provid
 - 🧪 **Tests** - Improve test coverage and quality
 - 🎨 **Code quality** - Refactoring, performance improvements, and best practices
 - 🔧 **DevOps improvements** - Docker, CI/CD, deployment enhancements
+- 🛡️ **Security enhancements** - Additional security features and best practices
+- 🏥 **Monitoring improvements** - Enhanced health checks and observability features
+- 🔍 **Validation decorators** - New custom validation and sanitization decorators
 
 ### Guidelines
 

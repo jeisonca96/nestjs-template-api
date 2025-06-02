@@ -17,4 +17,25 @@ export class AppConfig {
   get baseUrl(): string {
     return this.config.get('BASE_URL', 'http://localhost:3000');
   }
+
+  get corsOrigins(): string[] {
+    const origins = this.config.get('CORS_ORIGINS');
+    return origins ? origins.split(',') : ['*'];
+  }
+
+  get rateLimitWindow(): number {
+    return this.config.get('RATE_LIMIT_WINDOW', 15 * 60 * 1000); // 15 minutes
+  }
+
+  get rateLimitMax(): number {
+    return this.config.get('RATE_LIMIT_MAX', 100);
+  }
+
+  get isProduction(): boolean {
+    return this.config.get('NODE_ENV') === 'production';
+  }
+
+  get isDevelopment(): boolean {
+    return this.config.get('NODE_ENV') === 'development';
+  }
 }
