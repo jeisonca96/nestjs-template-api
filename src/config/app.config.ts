@@ -15,6 +15,6 @@ export class AppConfig {
   }
 
   get baseUrl(): string {
-    return this.config.get('BASE_URL', 'http://localhost:4000');
+    return this.config.get('BASE_URL', 'http://localhost:3000');
   }
 }
