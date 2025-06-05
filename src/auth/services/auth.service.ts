@@ -223,6 +223,9 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(payload, {
       expiresIn: this.authConfig.authRefreshTokenExpiresIn,
     });
+    await this.userModel.findByIdAndUpdate(user._id, {
+      lastLoginAt: new Date(),
+    });
     this.logger.log(`Login success username: ${user.username}`);
 
     return {

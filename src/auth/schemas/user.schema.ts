@@ -11,6 +11,7 @@ export interface User extends Document {
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   tokenVersion: number;
+  lastLoginAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,6 +31,7 @@ export const UserSchema = new Schema<User>(
       default: [Roles.User],
     },
     tokenVersion: { type: Number, default: 1 },
+    lastLoginAt: { type: Date },
   },
   { timestamps: true },
 );
