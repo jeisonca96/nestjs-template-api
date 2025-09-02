@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppConfig } from './config/app.config';
 import { HealthModule } from './health/health.module';
@@ -30,7 +30,13 @@ import { ValidationModule } from './core-services/validation/validation.module';
         limit: 100,
       },
     ]),
-    MongooseModule.forRoot(process.env.DATABASES_MONGO_URL),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASES_MONGO_URL'),
+      }),
+      inject: [ConfigService],
+    }),
     ValidationModule,
     HealthModule,
     AuthModule,
