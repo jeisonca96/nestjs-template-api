@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { S3Repository } from './repositories/s3.repository';
 import {
   CustomLogger,
   CustomLoggerService,
 } from 'src/core-services/logger/custom-logger.service';
+import { PathRequiredException } from './exceptions';
 
 @Injectable()
 export class CloudStorageService {
@@ -28,7 +29,7 @@ export class CloudStorageService {
     this.logger.log(`File buffer length: ${file.buffer.length} bytes`);
 
     if (!path) {
-      throw new BadRequestException('Path is required', 'PATH_REQUIRED');
+      throw new PathRequiredException();
     }
 
     const result = await this.s3Repository.uploadFile(

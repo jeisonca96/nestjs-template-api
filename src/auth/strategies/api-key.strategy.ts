@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-custom';
 import { AuthService } from '../services/auth.service';
-import { UnauthorizedException } from '@nestjs/common';
+import { ApiKeyRequiredException, InvalidApiKeyException } from '../exceptions';
 
 @Injectable()
 export class ApiKeyAuthStrategy extends PassportStrategy(Strategy, 'apikey') {
@@ -15,12 +15,12 @@ export class ApiKeyAuthStrategy extends PassportStrategy(Strategy, 'apikey') {
     const secret = request.headers['x-api-secret'] as string;
 
     if (!apiKey || !secret) {
-      throw new UnauthorizedException('API Key and Secret required');
+      throw new ApiKeyRequiredException();
     }
 
     const isValid = await this.authService.validateApiKey(apiKey, secret);
     if (!isValid) {
-      throw new UnauthorizedException('Invalid API Key or Secret');
+      throw new InvalidApiKeyException();
     }
 
     return { apiKey, secret };

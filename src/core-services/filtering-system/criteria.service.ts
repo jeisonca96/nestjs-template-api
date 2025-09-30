@@ -1,6 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { Criterion, FilterOperator } from './criteria-filtering.dto';
+import {
+  InvalidBetweenException,
+  FilteringNotAllowedException,
+} from './exceptions';
 
 @Injectable()
 export class CriteriaService {
@@ -60,10 +64,7 @@ export class CriteriaService {
     value: any,
   ): Record<string, any> {
     if (!Array.isArray(value) || value.length !== 2) {
-      throw new BadRequestException(
-        'Between operator requires an array of two values',
-        'INVALID_BETWEEN',
-      );
+      throw new InvalidBetweenException();
     }
 
     const [start, end] = value.map((v) =>
@@ -101,10 +102,7 @@ export class CriteriaService {
 
   private validateField(field: string, notAllowedFields: string[]) {
     if (notAllowedFields.includes(field)) {
-      throw new BadRequestException(
-        `Filtering by ${field} is not allowed`,
-        'FILTERING_NOT_ALLOWED',
-      );
+      throw new FilteringNotAllowedException(field);
     }
   }
 }

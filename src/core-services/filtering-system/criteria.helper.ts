@@ -1,16 +1,13 @@
 import { plainToInstance } from 'class-transformer';
-import { BadRequestException } from '@nestjs/common';
 import { Criterion, LogicalOperator } from './criteria-filtering.dto';
+import { InvalidCriteriaException } from './exceptions';
 
 export function transformToCriteria(value: any): Criterion[] {
   try {
     const parsed = typeof value === 'string' ? JSON.parse(value) : value;
     return convertCriteria(parsed);
   } catch (error) {
-    throw new BadRequestException(
-      'Invalid criteria format',
-      'INVALID_CRITERIA',
-    );
+    throw new InvalidCriteriaException();
   }
 }
 

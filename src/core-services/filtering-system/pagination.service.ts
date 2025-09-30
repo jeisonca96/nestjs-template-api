@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FilterQuery, Model } from 'mongoose';
 import { FilterQueryDto, SortOrder, PaginatedResponse } from './pagination.dto';
+import { InvalidSortFieldException } from './exceptions';
 
 @Injectable()
 export class PaginationService {
@@ -12,10 +13,7 @@ export class PaginationService {
     notAllowedFields: string[] = [],
   ): Promise<PaginatedResponse<T>> {
     if (dto.sortBy && notAllowedFields.includes(dto.sortBy)) {
-      throw new BadRequestException(
-        `Invalid sort field: ${dto.sortBy}`,
-        'INVALID_SORT_FIELD',
-      );
+      throw new InvalidSortFieldException(dto.sortBy);
     }
 
     let queryBuilder = model

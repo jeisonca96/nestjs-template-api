@@ -1,8 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-} from '@nestjs/common';
+  UsernameExistsException,
+  UserNotFoundException,
+  InvalidTokenException,
+  EmailExistsException,
+  PhoneExistsException,
+} from '../exceptions';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
@@ -156,7 +159,7 @@ export class AuthService {
       username: data.username,
     });
     if (existUser) {
-      throw new ConflictException('Username already exists');
+      throw new UsernameExistsException();
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -189,12 +192,12 @@ export class AuthService {
     try {
       payload = this.jwtService.verify(token);
     } catch (error) {
-      throw new BadRequestException('Invalid or expired token');
+      throw new InvalidTokenException();
     }
 
     const user = await this.userModel.findById(payload.sub);
     if (!user || user.tokenVersion !== payload.version) {
-      throw new BadRequestException('Invalid or expired token');
+      throw new InvalidTokenException();
     }
 
     if (payload.type === VerificationTypes.Email) {
@@ -289,7 +292,7 @@ export class AuthService {
   async changePassword(userId: string, newPassword: string, userName?: string) {
     const user = await this.userModel.findById(userId);
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UserNotFoundException();
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -303,7 +306,7 @@ export class AuthService {
   async forgotPassword(email: string, userName?: string) {
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UserNotFoundException();
     }
 
     await this.sendPasswordResetEmail(user, userName);
@@ -315,12 +318,12 @@ export class AuthService {
     this.logger.log(`Update email for user: ${userId}`);
     const user = await this.userModel.findById(userId);
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UserNotFoundException();
     }
 
     const existsEmail = await this.userModel.exists({ email: newEmail });
     if (existsEmail) {
-      throw new ConflictException('Email already exists');
+      throw new EmailExistsException();
     }
 
     user.email = newEmail;
@@ -333,12 +336,12 @@ export class AuthService {
     this.logger.log(`Update phone for user: ${userId}`);
     const user = await this.userModel.findById(userId);
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new UserNotFoundException();
     }
 
     const existsPhone = await this.userModel.exists({ phoneNumber: newPhone });
     if (existsPhone) {
-      throw new ConflictException('Phone already exists');
+      throw new PhoneExistsException();
     }
 
     user.phoneNumber = newPhone;

@@ -7,7 +7,6 @@ import {
   Param,
   Get,
   Query,
-  BadRequestException,
   HttpStatus,
   HttpCode,
   ParseFilePipe,
@@ -26,6 +25,7 @@ import {
 import { AllowedRoles } from 'src/auth/decorators/allowed-roles.decorator';
 import { Roles } from 'src/auth/constants';
 import { GetSignedUrlDto } from './cloud-storage.dto';
+import { FileRequiredException } from './exceptions';
 
 @Controller(ApiTagsEnum.CloudStorage)
 @ApiTags(ApiTagsEnum.CloudStorage)
@@ -48,7 +48,7 @@ export class CloudStorageController {
     @Query('path') path: string,
   ) {
     if (!file.buffer) {
-      throw new BadRequestException('File is required', 'FILE_REQUIRED');
+      throw new FileRequiredException();
     }
 
     return this.storageService.uploadFile(file, path);

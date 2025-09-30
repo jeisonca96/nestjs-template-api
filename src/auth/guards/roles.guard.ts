@@ -1,13 +1,12 @@
-import {
-  Injectable,
-  ExecutionContext,
-  UnauthorizedException,
-  CanActivate,
-} from '@nestjs/common';
+import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { ALLOWED_ROLES_KEY } from '../decorators/allowed-roles.decorator';
 import { Roles } from '../constants';
+import {
+  UserNoRolesException,
+  InsufficientPermissionsException,
+} from '../exceptions';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -27,7 +26,7 @@ export class RolesGuard implements CanActivate {
     const user = request.user;
 
     if (!user?.roles?.length) {
-      throw new UnauthorizedException('User has no roles assigned');
+      throw new UserNoRolesException();
     }
 
     const hasPermission = requiredRoles.some((role) =>
@@ -35,9 +34,7 @@ export class RolesGuard implements CanActivate {
     );
 
     if (!hasPermission) {
-      throw new UnauthorizedException(
-        'You do not have permission to access this resource',
-      );
+      throw new InsufficientPermissionsException();
     }
 
     return true;
