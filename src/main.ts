@@ -7,6 +7,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { BuildApiDocs } from './apidocs';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { Environment } from './constants';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -50,7 +51,7 @@ async function bootstrap() {
   });
 
   // Security middleware (only in production)
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === Environment.Production) {
     logger.log('Configuring security middleware...');
     app.use(
       helmet({

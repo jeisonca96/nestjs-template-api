@@ -1,3 +1,10 @@
+export enum Environment {
+  Development = 'development',
+  Production = 'production',
+  Test = 'test',
+  Staging = 'staging',
+}
+
 export enum ApiTagsEnum {
   Auth = 'auth',
   CloudStorage = 'cloud-storage',

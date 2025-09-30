@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Environment } from '../constants';
 
 @Injectable()
 export class AppConfig {
@@ -32,10 +33,10 @@ export class AppConfig {
   }
 
   get isProduction(): boolean {
-    return this.config.get('NODE_ENV') === 'production';
+    return this.config.get('NODE_ENV') === Environment.Production;
   }
 
   get isDevelopment(): boolean {
-    return this.config.get('NODE_ENV') === 'development';
+    return this.config.get('NODE_ENV') === Environment.Development;
   }
 }
