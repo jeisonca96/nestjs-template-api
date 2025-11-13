@@ -1,29 +1,60 @@
-import { json } from 'express';
 import { NestFactory } from '@nestjs/core';
-import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import {
+  INestApplication,
+  Logger,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AppConfig } from './config/app.config';
 import { SwaggerModule } from '@nestjs/swagger';
 import { BuildApiDocs } from './apidocs';
+import { Handler, Context, Callback } from 'aws-lambda';
+const serverlessExpress = require('@codegenie/serverless-express');
+import { json } from 'express';
+const express = require('express');
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { Environment } from './constants';
 
-async function bootstrap() {
-  const logger = new Logger('Bootstrap');
+let cachedServer: Handler;
 
-  // Check if running in Lambda environment
-  if (process.env.AWS_EXECUTION_ENV) {
-    logger.log('Running in AWS Lambda - skipping standalone server');
-    return;
+async function bootstrapServer(): Promise<Handler> {
+  if (!cachedServer) {
+    const logger = new Logger('Lambda');
+    logger.log('Initializing Lambda application...');
+
+    const expressApp = express();
+    const adapter = new ExpressAdapter(expressApp);
+
+    const app = await NestFactory.create(AppModule, adapter, {
+      logger: ['error', 'warn', 'log'],
+      bufferLogs: true,
+    });
+
+    const appConfig = app.get(AppConfig);
+    const limit = appConfig.bodyLimit;
+
+    // Configure app for Lambda
+    configureApp(app, appConfig, limit);
+
+    await app.init();
+
+    logger.log('Lambda application initialized successfully');
+    const server = serverlessExpress({ app: expressApp });
+    cachedServer = server;
   }
 
-  logger.log('Initializing application...');
+  return cachedServer;
+}
 
-  const app = await NestFactory.create(AppModule);
-  const appConfig = app.get(AppConfig);
-  const limit = appConfig.bodyLimit;
-  const port = appConfig.port;
+function configureApp(
+  app: INestApplication,
+  appConfig: AppConfig,
+  limit: string,
+): void {
+  const logger = new Logger('LambdaConfig');
 
   // Enhanced validation and sanitization
   logger.log('Configuring global validation pipes...');
@@ -56,7 +87,7 @@ async function bootstrap() {
     defaultVersion: '1',
   });
 
-  // Security middleware (only in production)
+  // Security middleware - adjusted for Lambda
   if (process.env.NODE_ENV === Environment.Production) {
     logger.log('Configuring security middleware...');
     app.use(
@@ -79,7 +110,7 @@ async function bootstrap() {
     );
   }
 
-  // Rate limiting middleware
+  // Rate limiting - Lambda compatible
   const limiter = rateLimit({
     windowMs: appConfig.rateLimitWindow,
     max: appConfig.rateLimitMax,
@@ -91,25 +122,37 @@ async function bootstrap() {
     },
     standardHeaders: true,
     legacyHeaders: false,
+    // Use a store compatible with Lambda (in-memory for single instance)
+    skipFailedRequests: false,
+    skipSuccessfulRequests: false,
   });
   app.use(limiter);
 
+  // CORS configuration
   app.enableCors({
     origin: appConfig.corsOrigins,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
     credentials: true,
   });
 
   logger.log('Setting custom limit for JSON body parser', { limit });
   app.use(json({ limit }));
 
+  // Swagger documentation
   const { config, route } = BuildApiDocs(appConfig.baseUrl);
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(route, app, document);
-
-  await app.listen(port);
-  logger.log(`Application is running on port ${port}`);
 }
 
-bootstrap();
+export const handler: Handler = async (
+  event: any,
+  context: Context,
+  callback: Callback,
+) => {
+  // AWS Lambda context reuse optimization
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  const server = await bootstrapServer();
+  return server(event, context, callback);
+};
